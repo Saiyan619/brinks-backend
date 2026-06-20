@@ -1,0 +1,51 @@
+use axum::response::IntoResponse;
+use sqlx::query_as;
+
+use crate::{models::ChatRoom, state::DbClient};
+
+
+impl DbClient{
+    pub async fn create_chatroom(&self, room_name: impl Into<Option<String>>, created_by: uuid::Uuid, recipient_id: uuid::Uuid, description: impl Into<Option<String>>, is_direct: bool) -> Result<ChatRoom, sqlx::Error>{
+        let direct_key = if is_direct{
+            let mut key = [created_by.to_string(), recipient_id.to_string()];
+            key.sort();
+            let new_key = key.join(":");
+            Some(new_key)
+        }else{
+            None
+        };
+
+        let room = query_as!(
+            ChatRoom,
+            r#"INSERT INTO chatroom (room_name, description, is_direct, direct_key, created_by) 
+            VALUES($1, $2, $3, $4, $5)
+            ON CONFLICT(direct_key) DO UPDATE SET updated_at = NOW()
+            RETURNING room_id, room_name, description, is_direct, direct_key, created_by, created_at, updated_at"#,
+            room_name.into(),
+            description.into(),
+            is_direct,
+            direct_key,
+            created_by
+        ).fetch_one(&self.pool).await?;
+
+        Ok(room)
+    }
+
+    pub async fn get_chatroom(&self, created_by: uuid::Uuid, recipient_id: uuid::Uuid, is_direct: bool) -> Result<Option<ChatRoom>, sqlx::Error> {
+        let direct_key = if is_direct{
+            let mut key = [created_by.to_string(), recipient_id.to_string()];
+            key.sort();
+            let new_key = key.join(":");
+            Some(new_key)
+        }else{
+            None
+        };
+        let room = sqlx::query_as!(
+            ChatRoom,
+            r#"SELECT room_id, room_name, description, is_direct, direct_key, created_by, created_at, updated_at FROM chatroom where direct_key = $1 AND is_direct = true"#,
+            direct_key
+        ).fetch_optional(&self.pool).await?;
+        
+        Ok(room)
+    }
+}
