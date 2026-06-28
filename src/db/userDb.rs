@@ -6,7 +6,7 @@ use crate::{models::User, state::DbClient};
 
 // then create an impl that runs queries functions
 impl DbClient {
-    pub async fn get_user_by_id(&self, id: uuid::Uuid) -> Result<Option<User>, sqlx::Error> {
+    pub async fn get_user_by_id(&self, id: Option<uuid::Uuid>) -> Result<Option<User>, sqlx::Error> {
         let user = sqlx::query_as!(
             User,
             r#"SELECT id, username, email, password_hash, is_verified, verification_token, verification_token_expires, reset_token, reset_token_expires, last_seen, created_at, updated_at FROM users WHERE id = $1"#,

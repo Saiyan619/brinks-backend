@@ -37,7 +37,7 @@ pub async fn auth_middleware(cookie: CookieJar, Extension(app_state): Extension<
    };
    let user_id = uuid::Uuid::parse_str(&token_details.sub).map_err(|_| HttpError::unauthorized(ErrorMessage::Unauthorized.return_err()))?;
 
-   let user = app_state.db_client.get_user_by_id(user_id).await.map_err(|_| HttpError::server_error(ErrorMessage::Unauthorized.return_err()))?
+   let user = app_state.db_client.get_user_by_id(Some(user_id)).await.map_err(|_| HttpError::server_error(ErrorMessage::Unauthorized.return_err()))?
    .ok_or_else(|| HttpError::unauthorized(ErrorMessage::UserNotExist.return_err()))?;
 
    req.extensions_mut().insert(JwtAuthMiddleware{

@@ -62,14 +62,10 @@ pub async fn handle_socket(socket: WebSocket, app_state: Arc<AppState>, room_id:
         };
         }
 
-        
 }
 
 
 // Verify ws - thankfully i already wrote a jwt middleware that helps with this
-
-
-
 
 
 // Lock the HashMap so you can safely look inside it.

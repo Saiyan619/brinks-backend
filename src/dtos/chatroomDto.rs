@@ -16,7 +16,7 @@ pub struct CreateRoomRequest{
 
     pub created_by: uuid::Uuid,
 
-    pub recipient: uuid::Uuid
+    pub recipient: Option<uuid::Uuid>
 }
 
 #[derive(Serialize)]
