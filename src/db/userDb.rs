@@ -14,7 +14,6 @@ impl DbClient {
         )
         .fetch_optional(&self.pool) // Added '&' here
         .await?; // Added '?' to handle the DB error
-
         Ok(user) // This now works because 'user' is an Option<User>
     }
 

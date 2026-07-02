@@ -1,15 +1,17 @@
 use std::sync::Arc;
 
-use axum::{Extension, Json, Router, response::IntoResponse, routing::post};
+use axum::{Extension, Json, Router, response::IntoResponse, routing::{get, post}};
 use validator::Validate;
 
-use crate::{dtos::{chatroomDto::{CreateRoomRequest, CreateRoomResponse}, userDto::{self, Response}}, errors::{ErrorMessage, HttpError}, models::ChatRoom, state::AppState, utils::middleware::JwtAuthMiddleware};
+use crate::{dtos::{chatroomDto::{ChatRoomsResponse, CreateRoomRequest, CreateRoomResponse}, userDto::{self, Response}}, errors::{ErrorMessage, HttpError}, models::ChatRoom, state::AppState, utils::middleware::JwtAuthMiddleware};
 
 pub fn room_handler() -> Router {
     Router::new().
     route("/chat", post(create_single_room_route)).
-    route("/create-groupchat", post(create_group_chatroom))
+    route("/create-groupchat", post(create_group_chatroom)).
+    route("/all-groupchats", get(get_group_rooms))
 }
+
 
 pub async fn create_single_room_route(Extension(app_state):Extension<Arc<AppState>>, Extension(user): Extension<JwtAuthMiddleware>, Json(body): Json<CreateRoomRequest>) -> Result<impl  IntoResponse, HttpError> {
     body.validate().map_err(|_| HttpError::bad_service(ErrorMessage::InvalidInput.return_err()))?;
@@ -54,7 +56,15 @@ pub async fn create_group_chatroom(Extension(app_state):Extension<Arc<AppState>>
         data: result
     });
 
-    Ok(room)
+    Ok(room)   
+}
 
-    
+pub async fn get_group_rooms(Extension(appstate): Extension<Arc<AppState>>, Extension(user): Extension<JwtAuthMiddleware>) -> Result<impl IntoResponse, HttpError> {
+    let result = appstate.db_client.get_group_chatrooms().await.map_err(|_| HttpError::server_error(ErrorMessage::RoomNotFound.return_err()))?;
+    let response = Json(ChatRoomsResponse{
+        status: "success".to_string(),
+        data: result
+    });
+
+    Ok(response)
 }

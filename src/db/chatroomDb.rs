@@ -78,4 +78,13 @@ impl DbClient{
         
         Ok(room)
     }
+
+    pub async fn get_group_chatrooms(&self) -> Result<Vec<ChatRoom>, sqlx::Error> {
+        let rooms = query_as!(
+            ChatRoom,
+            r#"SELECT room_id, room_name, description, is_direct, direct_key, created_by, created_at, updated_at FROM chatroom WHERE is_direct = false ORDER BY created_at DESC LIMIT 100"#
+        ).fetch_all(&self.pool).await?;
+
+        Ok(rooms)
+    }
 }

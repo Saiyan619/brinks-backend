@@ -24,3 +24,14 @@ pub struct CreateRoomResponse {
     pub status: String,
     pub data: ChatRoom, 
 }
+
+#[derive(Serialize)]
+pub struct ChatRoomResponse{
+    pub status: String,
+    pub data: ChatRoom
+}
+#[derive(Serialize)]
+pub struct ChatRoomsResponse{
+    pub status: String,
+    pub data: Vec<ChatRoom>
+}
