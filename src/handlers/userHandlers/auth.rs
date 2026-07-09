@@ -12,6 +12,7 @@ pub fn auth_handlers() -> Router {
     Router::new()
     .route("/register", post(register))
     .route("/login", post(login))
+    .route("/logout", post(logout))
     .route("/verify-email", get(verify_email))
 }
 pub async fn register(Extension(app_state): Extension<Arc<AppState>>, Json(body):Json<RegisterUserDto>) -> Result<impl IntoResponse, HttpError> {
@@ -73,6 +74,29 @@ pub async fn login(Extension(app_state): Extension<Arc<AppState>>, Json(body): J
 
     Ok(response)
 
+}
+
+pub async fn logout() -> Result<impl IntoResponse, HttpError> {
+    let cookie = Cookie::build(("token", ""))
+        .path("/")
+        .max_age(time::Duration::minutes(-1)) // expire immediately
+        .http_only(true)
+        .same_site(SameSite::Lax) // must match login — remove when you remove it there
+        // .secure(true) // add this in both places when you add it to login
+        .build();
+        //Every single one above must match the login too
+
+    let response = axum::response::Json(serde_json::json!({
+        "status": "success",
+        "message": "Logged out"
+    }));
+
+    let mut header = HeaderMap::new();
+    header.append(SET_COOKIE, cookie.to_string().parse().unwrap());
+    let mut response = response.into_response();
+    response.headers_mut().extend(header);
+
+    Ok(response)
 }
 
 pub async fn verify_email(Extension(app_state): Extension<Arc<AppState>>, Query(body): Query<VerifyEmailQueryDto>) -> Result<impl IntoResponse, HttpError> {
