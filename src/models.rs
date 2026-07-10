@@ -28,9 +28,23 @@ pub struct ChatRoom{
     pub created_by: Option<uuid::Uuid>,
     //Comeback to this: fix the migration to a not null - its a time variable which postgress would create on auto so option isnt necessary
     pub created_at: Option<DateTime<Utc>>,
-    pub updated_at: DateTime<Utc>
+    pub updated_at: DateTime<Utc>,
 }
 
+// Only solution i can see for checking exsiting members rn, need to be able to add a is_member to this model
+// without affecting the rest using the chatroom as sqlx keeps stressing at compile time, Comeback to make some optimizations later
+#[derive(Debug, Serialize, Deserialize, Clone, sqlx::FromRow)]
+pub struct GroupChatroomWithMembership {
+    pub room_id: uuid::Uuid,
+    pub room_name: Option<String>,
+    pub description: Option<String>,
+    pub is_direct: bool,
+    pub direct_key: Option<String>,
+    pub created_by: Option<uuid::Uuid>,
+    pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: DateTime<Utc>,
+    pub is_member: bool,
+}
 
 #[derive(Debug, Serialize, Deserialize, Clone, sqlx::FromRow)]
 pub struct Message{

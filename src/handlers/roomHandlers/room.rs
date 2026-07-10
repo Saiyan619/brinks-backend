@@ -60,7 +60,7 @@ pub async fn create_group_chatroom(Extension(app_state):Extension<Arc<AppState>>
 }
 
 pub async fn get_group_rooms(Extension(appstate): Extension<Arc<AppState>>, Extension(user): Extension<JwtAuthMiddleware>) -> Result<impl IntoResponse, HttpError> {
-    let result = appstate.db_client.get_group_chatrooms().await.map_err(|_| HttpError::server_error(ErrorMessage::RoomNotFound.return_err()))?;
+    let result = appstate.db_client.get_group_chatrooms(Some(user.user.id)).await.map_err(|_| HttpError::server_error(ErrorMessage::RoomNotFound.return_err()))?;
     let response = Json(ChatRoomsResponse{
         status: "success".to_string(),
         data: result

@@ -26,7 +26,8 @@ pub enum ErrorMessage {
     AddMemberFailedV2,
     RoomNotFound,
     FailedToGetMsg,
-    RoomAlreadyExist
+    RoomAlreadyExist,
+    MemberNotExist
 }
 
 impl ErrorMessage {
@@ -50,6 +51,7 @@ impl ErrorMessage {
             ErrorMessage::RoomNotFound => "Failed to find room, it does not exist".to_string(),
             ErrorMessage::FailedToGetMsg => "Failed to get messages".to_string(),
             ErrorMessage::RoomAlreadyExist => "Chat room already exists".to_string(),
+            ErrorMessage::MemberNotExist => "room member doesnt exist!!".to_string(),
             ErrorMessage::EmailError => "Failed to send email!!".to_string()
         }
     }

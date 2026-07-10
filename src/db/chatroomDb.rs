@@ -1,7 +1,7 @@
 use axum::response::IntoResponse;
 use sqlx::query_as;
 
-use crate::{models::ChatRoom, state::DbClient};
+use crate::{models::{ChatRoom, GroupChatroomWithMembership}, state::DbClient};
 
 
 impl DbClient{
@@ -79,10 +79,24 @@ impl DbClient{
         Ok(room)
     }
 
-    pub async fn get_group_chatrooms(&self) -> Result<Vec<ChatRoom>, sqlx::Error> {
+    // FIX for checking and assigning if user is a member to any room(this was the best solution i can come up with rn)
+    // Quick recap of what actually fixed it, in case it's useful for next time: 
+    // is_member gets computed live from room_members via a correlated EXISTS subquery, 
+    // kept off the shared ChatRoom struct (so it doesn't break your other queries), 
+    // and lives on its own GroupChatroomWithMembership struct + response type instead — 
+    // then the frontend just reads that boolean straight off each group to decide "Open" vs "Join Group."
+    pub async fn get_group_chatrooms(&self, user_id: Option<uuid::Uuid>) -> Result<Vec<GroupChatroomWithMembership>, sqlx::Error> {
         let rooms = query_as!(
-            ChatRoom,
-            r#"SELECT room_id, room_name, description, is_direct, direct_key, created_by, created_at, updated_at FROM chatroom WHERE is_direct = false ORDER BY created_at DESC LIMIT 100"#
+            GroupChatroomWithMembership,
+            r#"SELECT  chatroom.room_id, chatroom.room_name, chatroom.description, chatroom.is_direct,
+            chatroom.direct_key, chatroom.created_by, chatroom.created_at, chatroom.updated_at, 
+            EXISTS (
+            SELECT 1 FROM room_members
+            WHERE room_members.room_id = chatroom.room_id AND room_members.user_id = $1
+            ) AS "is_member!" FROM chatroom
+            WHERE is_direct = false 
+            ORDER BY created_at DESC LIMIT 100"#,
+            user_id
         ).fetch_all(&self.pool).await?;
 
         Ok(rooms)
