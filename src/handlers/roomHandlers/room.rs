@@ -3,13 +3,14 @@ use std::sync::Arc;
 use axum::{Extension, Json, Router, response::IntoResponse, routing::{get, post}};
 use validator::Validate;
 
-use crate::{dtos::{chatroomDto::{ChatRoomsResponse, CreateRoomRequest, CreateRoomResponse}, userDto::{self, Response}}, errors::{ErrorMessage, HttpError}, models::ChatRoom, state::AppState, utils::middleware::JwtAuthMiddleware};
+use crate::{dtos::{chatroomDto::{ChatRoomsResponse, CreateRoomRequest, CreateRoomResponse, GroupChatRoomsResponse, UserChatRoomsResponse}, userDto::{self, Response}}, errors::{ErrorMessage, HttpError}, models::ChatRoom, state::AppState, utils::middleware::JwtAuthMiddleware};
 
 pub fn room_handler() -> Router {
     Router::new().
     route("/chat", post(create_single_room_route)).
     route("/create-groupchat", post(create_group_chatroom)).
-    route("/all-groupchats", get(get_group_rooms))
+    route("/all-groupchats", get(get_group_rooms)).
+    route("/user-direct-chats", get(get_user_direct_rooms))
 }
 
 
@@ -61,7 +62,17 @@ pub async fn create_group_chatroom(Extension(app_state):Extension<Arc<AppState>>
 
 pub async fn get_group_rooms(Extension(appstate): Extension<Arc<AppState>>, Extension(user): Extension<JwtAuthMiddleware>) -> Result<impl IntoResponse, HttpError> {
     let result = appstate.db_client.get_group_chatrooms(Some(user.user.id)).await.map_err(|_| HttpError::server_error(ErrorMessage::RoomNotFound.return_err()))?;
-    let response = Json(ChatRoomsResponse{
+    let response = Json(GroupChatRoomsResponse{
+        status: "success".to_string(),
+        data: result
+    });
+
+    Ok(response)
+}
+
+pub async fn get_user_direct_rooms(Extension(app_state):Extension<Arc<AppState>>, Extension(user): Extension<JwtAuthMiddleware>) -> Result<impl IntoResponse, HttpError>{
+    let result = app_state.db_client.get_user_direct_chatrooms(Some(user.user.id)).await.map_err(|_| HttpError::server_error(ErrorMessage::RoomNotFound.return_err()))?;
+    let response = Json(UserChatRoomsResponse{
         status: "success".to_string(),
         data: result
     });

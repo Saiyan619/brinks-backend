@@ -47,6 +47,19 @@ pub struct GroupChatroomWithMembership {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, sqlx::FromRow)]
+pub struct ChatRoomWithOtherUser {
+    pub room_id: uuid::Uuid,
+    pub room_name: Option<String>,
+    pub description: Option<String>,
+    pub is_direct: bool,
+    pub direct_key: Option<String>,
+    pub created_by: Option<uuid::Uuid>,
+    pub created_at: Option<DateTime<Utc>>,
+    pub updated_at: DateTime<Utc>,
+    pub other_username: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone, sqlx::FromRow)]
 pub struct Message{
     pub messages_id: uuid::Uuid,
     pub room_id: uuid::Uuid,

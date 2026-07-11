@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::models::{ChatRoom, GroupChatroomWithMembership};
+use crate::models::{ChatRoom, ChatRoomWithOtherUser, GroupChatroomWithMembership};
 
 
 #[derive(Debug, Validate, Deserialize)]
@@ -33,5 +33,17 @@ pub struct ChatRoomResponse{
 #[derive(Serialize)]
 pub struct ChatRoomsResponse{
     pub status: String,
+    pub data: Vec<ChatRoom>
+}
+
+#[derive(Serialize)]
+pub struct GroupChatRoomsResponse{
+    pub status: String,
     pub data: Vec<GroupChatroomWithMembership>
+}
+
+#[derive(Serialize)]
+pub struct UserChatRoomsResponse{
+    pub status: String,
+    pub data: Vec<ChatRoomWithOtherUser>
 }
