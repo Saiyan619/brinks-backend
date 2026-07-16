@@ -10,7 +10,9 @@ pub fn room_handler() -> Router {
     route("/chat", post(create_single_room_route)).
     route("/create-groupchat", post(create_group_chatroom)).
     route("/all-groupchats", get(get_group_rooms)).
-    route("/user-direct-chats", get(get_user_direct_rooms))
+    route("/user-direct-chats", get(get_user_direct_rooms)).
+    route("/user-group-chats", get(get_user_group_rooms))
+    
 }
 
 
@@ -72,6 +74,16 @@ pub async fn get_group_rooms(Extension(appstate): Extension<Arc<AppState>>, Exte
 
 pub async fn get_user_direct_rooms(Extension(app_state):Extension<Arc<AppState>>, Extension(user): Extension<JwtAuthMiddleware>) -> Result<impl IntoResponse, HttpError>{
     let result = app_state.db_client.get_user_direct_chatrooms(Some(user.user.id)).await.map_err(|_| HttpError::server_error(ErrorMessage::RoomNotFound.return_err()))?;
+    let response = Json(UserChatRoomsResponse{
+        status: "success".to_string(),
+        data: result
+    });
+
+    Ok(response)
+}
+
+pub async fn get_user_group_rooms(Extension(app_state):Extension<Arc<AppState>>, Extension(user): Extension<JwtAuthMiddleware>) -> Result<impl IntoResponse, HttpError>{
+    let result = app_state.db_client.get_user_group_chatrooms(Some(user.user.id)).await.map_err(|_| HttpError::server_error(ErrorMessage::RoomNotFound.return_err()))?;
     let response = Json(UserChatRoomsResponse{
         status: "success".to_string(),
         data: result

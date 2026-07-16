@@ -112,6 +112,39 @@ impl DbClient{
     Ok(rooms)
 }
 
+pub async fn get_user_group_chatrooms(&self, user_id: Option<uuid::Uuid>) -> Result<Vec<ChatRoomWithOtherUser>, sqlx::Error> {
+    let rooms = query_as!(
+        ChatRoomWithOtherUser,
+        r#"
+        SELECT
+            chatroom.room_id,
+            chatroom.room_name,
+            chatroom.description,
+            chatroom.is_direct,
+            chatroom.direct_key,
+            chatroom.created_by,
+            chatroom.created_at,
+            chatroom.updated_at,
+            other_user.username AS "other_username?"
+        FROM chatroom
+        JOIN room_members my_membership
+            ON my_membership.room_id = chatroom.room_id
+        LEFT JOIN room_members other_membership
+            ON other_membership.room_id = chatroom.room_id
+            AND other_membership.user_id != my_membership.user_id
+        LEFT JOIN users other_user
+            ON other_user.id = other_membership.user_id
+        WHERE my_membership.user_id = $1 AND chatroom.is_direct = false
+        ORDER BY chatroom.created_at DESC
+        "#,
+        user_id
+    )
+    .fetch_all(&self.pool)
+    .await?;
+
+    Ok(rooms)
+}
+
     // FIX for checking and assigning if user is a member to any room(this was the best solution i can come up with rn)
     // Quick recap of what actually fixed it, in case it's useful for next time: 
     // is_member gets computed live from room_members via a correlated EXISTS subquery, 
