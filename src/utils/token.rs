@@ -29,9 +29,18 @@ pub struct Claims{
 }
 
 pub fn decode_token(token: &str, secret: &[u8]) -> Result<Claims, HttpError> {
- let decode = decode::<Claims>(token, &DecodingKey::from_secret(secret), &Validation::new(Algorithm::HS256));
- match decode {
-     Ok(ok) => Ok(ok.claims),
-     Err(_) => return Err(HttpError::unauthorized(ErrorMessage::Unauthorized.return_err()))
- }
+    match decode::<Claims>(
+        token,
+        &DecodingKey::from_secret(secret),
+        &Validation::new(Algorithm::HS256),
+    ) {
+        Ok(data) => {
+            println!("JWT decoded successfully: {:?}", data.claims);
+            Ok(data.claims)
+        }
+        Err(err) => {
+            println!("JWT decode failed: {:?}", err);
+            Err(HttpError::unauthorized(ErrorMessage::Unauthorized.return_err()))
+        }
+    }
 }

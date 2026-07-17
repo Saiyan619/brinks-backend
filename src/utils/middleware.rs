@@ -31,15 +31,27 @@ pub async fn auth_middleware(cookie: CookieJar, Extension(app_state): Extension<
 
    let token = cookie.ok_or_else(|| HttpError::unauthorized(ErrorMessage::Unauthorized.return_err()))?;
    let secret = &app_state.envs.jwt_token;
+   // i will be using the code with logs below for now and come back to this
+//    let token_details = match token::decode_token(&token, secret.as_bytes()) {
+//        Ok(ok) => ok,
+//        Err(_) => return Err(HttpError::unauthorized(ErrorMessage::TokenFailed.return_err()))
+//    };
    let token_details = match token::decode_token(&token, secret.as_bytes()) {
-       Ok(ok) => ok,
-       Err(_) => return Err(HttpError::unauthorized(ErrorMessage::TokenFailed.return_err()))
-   };
-   let user_id = uuid::Uuid::parse_str(&token_details.sub).map_err(|_| HttpError::unauthorized(ErrorMessage::Unauthorized.return_err()))?;
+    Ok(details) => {
+        println!("JWT decoded successfully: {:?}", details);
+         details
+    }
+    Err(err) => {
+        println!("JWT decode error: {:?}", err);
+        return Err(HttpError::unauthorized(ErrorMessage::TokenFailed.return_err()));
+    }
+};
 
+   let user_id = uuid::Uuid::parse_str(&token_details.sub).map_err(|_| HttpError::unauthorized(ErrorMessage::Unauthorized.return_err()))?;
+   println!("Looking up user: {}", user_id);
    let user = app_state.db_client.get_user_by_id(Some(user_id)).await.map_err(|_| HttpError::server_error(ErrorMessage::Unauthorized.return_err()))?
    .ok_or_else(|| HttpError::unauthorized(ErrorMessage::UserNotExist.return_err()))?;
-
+   println!("DB returned: {:?}", user);
    req.extensions_mut().insert(JwtAuthMiddleware{
     user: user.clone()
    });

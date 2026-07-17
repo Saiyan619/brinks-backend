@@ -11,7 +11,6 @@ pub fn user_handlers() -> Router {
 }
 
 async fn get_me(Extension(_app_state):Extension<Arc<AppState>>, Extension(user): Extension<JwtAuthMiddleware>) -> Result<impl IntoResponse, HttpError> {
-    
     let filtered_user = UserDto::filter_user(&user.user);
     let response = UserResponseDto{
         status: "success".to_string(),

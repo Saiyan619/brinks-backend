@@ -15,7 +15,6 @@ pub fn room_handler() -> Router {
     
 }
 
-
 pub async fn create_single_room_route(Extension(app_state):Extension<Arc<AppState>>, Extension(user): Extension<JwtAuthMiddleware>, Json(body): Json<CreateRoomRequest>) -> Result<impl  IntoResponse, HttpError> {
     body.validate().map_err(|_| HttpError::bad_service(ErrorMessage::InvalidInput.return_err()))?;
     // let filtered_user = userDto::UserDto::filter_user(&user.user);
