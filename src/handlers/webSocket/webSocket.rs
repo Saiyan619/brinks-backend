@@ -12,6 +12,7 @@ pub fn ws_handler() -> Router {
     route("/wschat/:room_id", get(web_handler))
 }
 
+// Extractor for establishing WebSocket connections.
 pub async fn web_handler(ws: WebSocketUpgrade, 
     Path(room_id): Path<uuid::Uuid>, 
     Extension(app_state): Extension<Arc<AppState>>, 
@@ -20,7 +21,15 @@ pub async fn web_handler(ws: WebSocketUpgrade,
 ) -> impl IntoResponse {
     // body.validate().map_err(|_| HttpError::bad_service(ErrorMessage::SocketFailed.return_err()));
         let sender_id = user.user.id;
-    ws.on_upgrade(move |socket| handle_socket(socket,  app_state, room_id, sender_id))
+        // Consider adding this fallback for situations where the websocket conncetions fail
+        // from axum docs:
+        // Provide a callback to call if upgrading the connection fails.
+        // The connection upgrade is performed in a background task. If that fails this callback will be called.
+        // By default any errors will be silently ignored.
+        //  ws.on_failed_upgrade(|error| println!("Error upgrading websocket: {}", error))
+
+         // Finalize upgrading the connection and call the provided callback with the stream.
+         ws.on_upgrade(move |socket| handle_socket(socket,  app_state, room_id, sender_id))
 }
 
 pub async fn handle_socket(socket: WebSocket, app_state: Arc<AppState>, room_id: uuid::Uuid, sender_id: uuid::Uuid) {
