@@ -1,0 +1,64 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT room_id, room_name, description, is_direct, direct_key, created_by, created_at, updated_at FROM chatroom WHERE direct_key = $1 AND is_direct = true",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "room_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "room_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "is_direct",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "direct_key",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_by",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 6,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "c18826006ff6f1565e6133dbf26441a4ed33624f9e7a539886fdd9306c49503f"
+}

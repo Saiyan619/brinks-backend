@@ -1,0 +1,70 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "\n        SELECT\n            chatroom.room_id,\n            chatroom.room_name,\n            chatroom.description,\n            chatroom.is_direct,\n            chatroom.direct_key,\n            chatroom.created_by,\n            chatroom.created_at,\n            chatroom.updated_at,\n            other_user.username AS \"other_username?\"\n        FROM chatroom\n        JOIN room_members my_membership\n            ON my_membership.room_id = chatroom.room_id\n        LEFT JOIN room_members other_membership\n            ON other_membership.room_id = chatroom.room_id\n            AND other_membership.user_id != my_membership.user_id\n        LEFT JOIN users other_user\n            ON other_user.id = other_membership.user_id\n        WHERE my_membership.user_id = $1 AND chatroom.is_direct = false\n        ORDER BY chatroom.created_at DESC\n        ",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "room_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "room_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "is_direct",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "direct_key",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_by",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 6,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 8,
+        "name": "other_username?",
+        "type_info": "Varchar"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "c66ab8218217b23682bd74903e148ac6a5567edf72bb8084ce06349be3bd0728"
+}

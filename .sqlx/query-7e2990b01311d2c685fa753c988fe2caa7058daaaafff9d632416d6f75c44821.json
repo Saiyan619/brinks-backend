@@ -1,0 +1,68 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO chatroom (room_name, description, is_direct, direct_key, created_by) \n            VALUES($1, $2, $3, $4, $5)\n            ON CONFLICT(direct_key) DO UPDATE SET updated_at = NOW()\n            RETURNING room_id, room_name, description, is_direct, direct_key, created_by, created_at, updated_at",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "room_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "room_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "is_direct",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "direct_key",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_by",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 6,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Varchar",
+        "Bool",
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "7e2990b01311d2c685fa753c988fe2caa7058daaaafff9d632416d6f75c44821"
+}

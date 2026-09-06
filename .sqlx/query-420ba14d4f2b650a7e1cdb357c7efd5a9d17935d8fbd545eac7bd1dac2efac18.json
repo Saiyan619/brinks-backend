@@ -1,0 +1,68 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "INSERT INTO chatroom(room_name, description, is_direct, direct_key, created_by) \n            VALUES($1, $2, $3, $4, $5)\n            RETURNING room_id, room_name, description, is_direct, direct_key, created_by, created_at, updated_at",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "room_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "room_name",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 2,
+        "name": "description",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 3,
+        "name": "is_direct",
+        "type_info": "Bool"
+      },
+      {
+        "ordinal": 4,
+        "name": "direct_key",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_by",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 6,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 7,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Varchar",
+        "Varchar",
+        "Bool",
+        "Text",
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      true,
+      true,
+      false,
+      true,
+      true,
+      true,
+      false
+    ]
+  },
+  "hash": "420ba14d4f2b650a7e1cdb357c7efd5a9d17935d8fbd545eac7bd1dac2efac18"
+}

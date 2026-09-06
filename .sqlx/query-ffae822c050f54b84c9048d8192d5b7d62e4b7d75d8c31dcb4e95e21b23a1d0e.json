@@ -1,0 +1,52 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT messages_id, room_id, message, sender_id, updated_at, created_at FROM messages WHERE room_id = $1",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "messages_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 1,
+        "name": "room_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 2,
+        "name": "message",
+        "type_info": "Text"
+      },
+      {
+        "ordinal": 3,
+        "name": "sender_id",
+        "type_info": "Uuid"
+      },
+      {
+        "ordinal": 4,
+        "name": "updated_at",
+        "type_info": "Timestamptz"
+      },
+      {
+        "ordinal": 5,
+        "name": "created_at",
+        "type_info": "Timestamptz"
+      }
+    ],
+    "parameters": {
+      "Left": [
+        "Uuid"
+      ]
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      true,
+      false,
+      false
+    ]
+  },
+  "hash": "ffae822c050f54b84c9048d8192d5b7d62e4b7d75d8c31dcb4e95e21b23a1d0e"
+}
