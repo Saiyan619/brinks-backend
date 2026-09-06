@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{Extension, Json, Router, response::IntoResponse, routing::{post, get}};
 
-use crate::{dtos::userDto::{UserDto, UserResponseDto, UsersResponseDto}, errors::{ErrorMessage, HttpError}, state::AppState, utils::middleware::JwtAuthMiddleware};
+use crate::{dtos::user_dto::{UserDto, UserResponseDto, UsersResponseDto}, errors::{ErrorMessage, HttpError}, state::AppState, utils::middleware::JwtAuthMiddleware};
 
 pub fn user_handlers() -> Router {
     Router::new()

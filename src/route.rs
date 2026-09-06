@@ -3,7 +3,7 @@ use std::sync::Arc;
 use axum::{Extension, Router, middleware};
 use tower_http::trace::TraceLayer;
 
-use crate::{handlers::{messageHandlers::messages::message_handler, roomHandlers::room::room_handler, roomMemberHandlers::roomMember::room_members_handler, userHandlers::{auth::auth_handlers, user::user_handlers}, webSocket::webSocket::ws_handler}, state::AppState, utils::middleware::{JwtAuthMiddleware, auth_middleware}};
+use crate::{handlers::{message_handlers::messages::message_handler, room_handlers::room::room_handler, room_member_handlers::room_member::room_members_handler, user_handlers::{auth::auth_handlers, user::user_handlers}, web_socket::webSocket::ws_handler}, state::AppState, utils::middleware::{JwtAuthMiddleware, auth_middleware}};
 
 
 pub fn create_router(app_state: Arc<AppState>) -> Router {

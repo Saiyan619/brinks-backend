@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use axum::{Extension, Json, Router, response::IntoResponse, routing::post};
 
-use crate::{dtos::roomMemberDto::{RoomMembersRequest, roomMemberResponse}, errors::{ErrorMessage, HttpError}, state::AppState, utils::middleware::JwtAuthMiddleware};
+use crate::{dtos::room_member_dto::{RoomMembersRequest, roomMemberResponse}, errors::{ErrorMessage, HttpError}, state::AppState, utils::middleware::JwtAuthMiddleware};
 
 pub fn room_members_handler() -> Router {
     Router::new().
@@ -14,7 +14,7 @@ pub async fn join_room(Extension(appstate): Extension<Arc<AppState>>, Extension(
     if already_member {
         return Err(HttpError::bad_service("user already a member".to_string()));
     }
-    let result = appstate.db_client.add_roomMembers(body.room_id, Some(user.user.id)).await.map_err(|_| HttpError::server_error(ErrorMessage::AddMemberFailed.return_err()))?;
+    let result = appstate.db_client.add_room_members(body.room_id, Some(user.user.id)).await.map_err(|_| HttpError::server_error(ErrorMessage::AddMemberFailed.return_err()))?;
     let result_json = Json(roomMemberResponse{
         status: "success".to_string(),
         data: result

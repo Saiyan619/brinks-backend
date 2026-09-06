@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::Validate;
 
-use crate::{dtos::userDto, models::User};
+use crate::{dtos::user_dto, models::User};
 
 // #[validate(...)]: These are attributes provided by the validator crate.
 //  They define the "rules" for your data. 

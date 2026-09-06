@@ -5,7 +5,7 @@ use futures_util::{SinkExt, StreamExt};
 use tokio::sync::broadcast;
 use validator::Validate;
 
-use crate::{dtos::messageDto::MessageRequestDto, errors::{ErrorMessage, HttpError}, state::AppState, utils::middleware::JwtAuthMiddleware};
+use crate::{dtos::message_dto::MessageRequestDto, errors::{ErrorMessage, HttpError}, state::AppState, utils::middleware::JwtAuthMiddleware};
 
 pub fn ws_handler() -> Router {
     Router::new().

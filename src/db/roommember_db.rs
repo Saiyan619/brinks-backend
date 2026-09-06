@@ -4,15 +4,15 @@ use crate::{models::{RoomMembers, User}, state::DbClient};
 
 
 impl DbClient{
-    pub async fn add_roomMembers(&self, room_id: uuid::Uuid, user_id: Option<uuid::Uuid>) -> Result<RoomMembers, sqlx::Error>{
-        let roomMembers = query_as!(
+    pub async fn add_room_members(&self, room_id: uuid::Uuid, user_id: Option<uuid::Uuid>) -> Result<RoomMembers, sqlx::Error>{
+        let room_members = query_as!(
             RoomMembers,
             r#"INSERT INTO room_members(room_id, user_id) VALUES($1, $2) RETURNING room_id, user_id, joined_at"#,
             room_id,
             user_id
         ).fetch_one(&self.pool).await?;
 
-        Ok(roomMembers)
+        Ok(room_members)
     }
 
     pub async fn is_already_member(&self, user_id: Option<uuid::Uuid>, room_id: uuid::Uuid) -> Result<bool, sqlx::Error>{

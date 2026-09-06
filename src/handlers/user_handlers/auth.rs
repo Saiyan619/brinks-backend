@@ -6,7 +6,7 @@ use chrono::{Duration, Utc};
 use uuid::Timestamp;
 use validator::Validate;
 
-use crate::{dtos::userDto::{LoginReponseDto, LoginUserDto, RegisterUserDto, Response, VerifyEmailQueryDto}, errors::{ErrorMessage, HttpError}, mail::sendEmail::send_email_verification, state::AppState, utils::{password::{compare_password, hash_password}, token::create_token}};
+use crate::{dtos::user_dto::{LoginReponseDto, LoginUserDto, RegisterUserDto, Response, VerifyEmailQueryDto}, errors::{ErrorMessage, HttpError}, mail::send_email::send_email_verification, state::AppState, utils::{password::{compare_password, hash_password}, token::create_token}};
 
 pub fn auth_handlers() -> Router {
     Router::new()

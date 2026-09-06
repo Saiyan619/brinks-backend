@@ -4,7 +4,7 @@ use axum::{Extension, Json, Router, extract::Path, response::IntoResponse, routi
 use uuid::Uuid;
 use validator::Validate;
 
-use crate::{dtos::messageDto::{MessageRequestDto, MessageResponseDto, MessagesResponseDto}, errors::{ErrorMessage, HttpError}, state::AppState, utils::middleware::JwtAuthMiddleware};
+use crate::{dtos::message_dto::{MessageRequestDto, MessageResponseDto, MessagesResponseDto}, errors::{ErrorMessage, HttpError}, state::AppState, utils::middleware::JwtAuthMiddleware};
 
 pub fn message_handler() -> Router {
     Router::new().

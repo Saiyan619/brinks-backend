@@ -1,1 +1,1 @@
-pub mod sendEmail;
+pub mod send_email;
