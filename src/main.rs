@@ -53,7 +53,7 @@ async fn main() {
     let  app = create_router(Arc::new(app_state)).layer(cors.clone());
 
     // establish a listener
-    let listener = TcpListener::bind(format!("localhost:{}", port)).await.expect("listener error");
+    let listener = TcpListener::bind(format!("0.0.0.0:{}", port)).await.expect("listener error");
     println!("Server is running on port {}", port);
     // intergrate the router and listener to finally build a server
     axum::serve(listener, app).await.expect("server error");
