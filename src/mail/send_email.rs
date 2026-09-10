@@ -45,8 +45,9 @@ pub async fn send_email_verification(
     let smtp_from_address = env::var("SMTP_FROM_ADDRESS")?; 
 
     let subject = "Email Verification";
-    let base_url = "http://localhost:5173/verify-email";
-    let verification_url = create_verification_link(base_url, token);
+    let frontend_url = env::var("PROD_FRONTEND_URL")?;
+    let base_url = format!("{}/verify-email", frontend_url.trim_end_matches('/'));
+    let verification_url = create_verification_link(&base_url, token);
 
     let html_template = format!(
         r#"

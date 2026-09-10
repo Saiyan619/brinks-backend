@@ -28,8 +28,7 @@ async fn main() {
     .init();
 
     dotenv::dotenv().ok();
-    let prod_frontend_url = std::env::var("PROD_FRONTEND_URL")
-        .expect("PROD_FRONTEND_URL must be set");
+    let prod_frontend_url = std::env::var("PROD_FRONTEND_URL").expect("PROD_FRONTEND_URL must be set");
 
     let cors = CorsLayer::new()
     .allow_methods([Method::GET, Method::POST])
