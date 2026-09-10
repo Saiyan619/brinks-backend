@@ -56,6 +56,15 @@ impl DbClient {
 
         Ok(user)
     }
+    
+    pub async  fn get_verified_users(&self) -> Result<Vec<User>, sqlx::Error>{
+        let user = query_as!(
+            User,
+            r#"SELECT id, username, email, password_hash, is_verified, verification_token, verification_token_expires, reset_token, reset_token_expires, last_seen, created_at, updated_at FROM users WHERE is_verified=true"#
+        ).fetch_all(&self.pool).await?;
+
+        Ok(user)
+    }
 
 pub async fn create_user(
     &self, 

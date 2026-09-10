@@ -22,7 +22,7 @@ async fn get_me(Extension(_app_state):Extension<Arc<AppState>>, Extension(user):
 
 
 async fn get_users(Extension(app_state):Extension<Arc<AppState>>) -> Result<impl IntoResponse, HttpError> {
-    let result = app_state.db_client.get_users().await.map_err(|_| HttpError::server_error(ErrorMessage::FetchAllUsersFailed.return_err()))?;
+    let result = app_state.db_client.get_verified_users().await.map_err(|_| HttpError::server_error(ErrorMessage::FetchAllUsersFailed.return_err()))?;
     let filtered_users = UserDto::filter_users(&result);
     let users_len = filtered_users.len() as i64;
     let response = UsersResponseDto{
