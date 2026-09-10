@@ -3,6 +3,7 @@ use std::sync::Arc;
 use axum::{Extension, Json, Router, extract::Query, http::{HeaderMap, header::SET_COOKIE, response}, response::IntoResponse, routing::{Route, post, get}};
 use axum_extra::extract::cookie::{Cookie, SameSite};
 use chrono::{Duration, Utc};
+use serde::{Deserialize, Serialize};
 use uuid::Timestamp;
 use validator::Validate;
 
@@ -14,6 +15,7 @@ pub fn auth_handlers() -> Router {
     .route("/login", post(login))
     .route("/logout", post(logout))
     .route("/verify-email", get(verify_email))
+    .route("/health", get(api_health))
 }
 pub async fn register(Extension(app_state): Extension<Arc<AppState>>, Json(body):Json<RegisterUserDto>) -> Result<impl IntoResponse, HttpError> {
     body.validate().map_err(|e| HttpError::bad_service(e.to_string()))?;
@@ -128,6 +130,17 @@ pub async fn verify_email(Extension(app_state): Extension<Arc<AppState>>, Query(
     response.headers_mut().extend(header);
 
     Ok(response)
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct HealthMessageResponse{
+    message: String
+}
+pub async fn api_health() -> Result<impl IntoResponse, HttpError> {
+    let health_reponse = "This api is healthy and responsive";
+    Ok(Json(HealthMessageResponse{
+        message: health_reponse.to_string()
+    }))
 }
 
 
