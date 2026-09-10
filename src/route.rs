@@ -7,7 +7,7 @@ use tower_http::trace::TraceLayer;
 use crate::{errors::HttpError, handlers::{message_handlers::messages::message_handler, room_handlers::room::room_handler, room_member_handlers::room_member::room_members_handler, user_handlers::{auth::auth_handlers, user::user_handlers}, web_socket::webSocket::ws_handler}, state::AppState, utils::middleware::{auth_middleware}};
 
 pub fn health_handler() -> Router {
-    Router::new().route("/health", get(api_health))
+    Router::new().route("/", get(api_health))
 }
 #[derive(Debug, Serialize, Deserialize)]
 struct HealthMessageResponse{
