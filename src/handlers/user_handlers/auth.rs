@@ -56,11 +56,11 @@ pub async fn login(Extension(app_state): Extension<Arc<AppState>>, Json(body): J
     let maxage = app_state.envs.jwt_maxage;
     let token = create_token(user.id.to_string(), secret.as_bytes(),  maxage).map_err(|_| HttpError::server_error(ErrorMessage::TokenFailed.return_err()))?;
     let cookie_duration: time::Duration = time::Duration::minutes(maxage);
-
-    let cookie = Cookie::build(("token", &token)).path("/").max_age(cookie_duration).http_only(true).same_site(SameSite::Lax).build();
-    //When going to production remove same-site, only added it because i was having
-    //issues with saving the token in the cookie storage in my browser while building the frontend 
+    //When going to production change same-site to none, only added it because i was having
+    //issues with saving the token in the cookie storage in my browser while building the frontend so i change it to lax and removed the "secure" in development
     //also remember to add "secure" too
+    let cookie = Cookie::build(("token", &token)).path("/").max_age(cookie_duration).http_only(true).secure(true).same_site(SameSite::None).build();
+    
 
     let response = axum::response::Json(LoginReponseDto{
         status: "success".to_string(),
