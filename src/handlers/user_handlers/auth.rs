@@ -18,11 +18,18 @@ pub fn auth_handlers() -> Router {
 }
 pub async fn register(Extension(app_state): Extension<Arc<AppState>>, Json(body):Json<RegisterUserDto>) -> Result<impl IntoResponse, HttpError> {
     body.validate().map_err(|e| HttpError::bad_service(e.to_string()))?;
-
+    let old_user = app_state.db_client.get_user_by_email(&body.email).await.map_err(|e| HttpError::bad_service(e.to_string()))?;
+    match old_user {
+    Some(_user) => return Err(HttpError::bad_service(ErrorMessage::UserAlreadyExist.return_err())), 
+    
+    // Do nothing here so the function can naturally move on to the next lines
+    None => {} 
+}
     let new_user_hashed_password = hash_password(&body.password).map_err(|e| HttpError::bad_service(e.return_err()))?;
 
     let verification_token = uuid::Uuid::new_v4().to_string();
     let expires_at = Utc::now() + Duration::hours(24);
+
     let result = app_state.db_client.create_user(body.username, &body.email, new_user_hashed_password, verification_token.clone(), expires_at).await;
     match result {
         Ok(_) => {
@@ -58,7 +65,7 @@ pub async fn login(Extension(app_state): Extension<Arc<AppState>>, Json(body): J
     let cookie_duration: time::Duration = time::Duration::minutes(maxage);
     //When going to production change same-site to none, only added it because i was having
     //issues with saving the token in the cookie storage in my browser while building the frontend so i change it to lax and removed the "secure" in development
-    //also remember to add "secure" too
+    //also remember to add "secure" too in prod
     let cookie = Cookie::build(("token", &token)).path("/").max_age(cookie_duration).http_only(true).secure(true).same_site(SameSite::None).build();
     
 

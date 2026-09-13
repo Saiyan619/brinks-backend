@@ -38,7 +38,7 @@ pub async fn auth_middleware(cookie: CookieJar, Extension(app_state): Extension<
 //    };
    let token_details = match token::decode_token(&token, secret.as_bytes()) {
     Ok(details) => {
-        println!("JWT decoded successfully: {:?}", details);
+        // println!("JWT decoded successfully: {:?}", details);
          details
     }
     Err(err) => {
@@ -48,7 +48,7 @@ pub async fn auth_middleware(cookie: CookieJar, Extension(app_state): Extension<
 };
 
    let user_id = uuid::Uuid::parse_str(&token_details.sub).map_err(|_| HttpError::unauthorized(ErrorMessage::Unauthorized.return_err()))?;
-   println!("Looking up user: {}", user_id);
+//    println!("Looking up user: {}", user_id);
    let user = app_state.db_client.get_user_by_id(Some(user_id)).await.map_err(|_| HttpError::server_error(ErrorMessage::Unauthorized.return_err()))?
    .ok_or_else(|| HttpError::unauthorized(ErrorMessage::UserNotExist.return_err()))?;
    println!("DB returned: {:?}", user);
